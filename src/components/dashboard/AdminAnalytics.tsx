@@ -93,7 +93,7 @@ export const AdminAnalytics = () => {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="h-80">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                             <LineChart data={revenueData}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                                 <XAxis dataKey="month" axisLine={false} tickLine={false} fontSize={12} stroke="#94a3b8" />
@@ -113,7 +113,7 @@ export const AdminAnalytics = () => {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="h-80 flex items-center justify-center">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                             <RePieChart>
                                 <Pie
                                     data={userData}
@@ -150,7 +150,7 @@ export const AdminAnalytics = () => {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="h-80">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                             <BarChart data={stats?.topCourses || []}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                                 <XAxis dataKey="title" axisLine={false} tickLine={false} fontSize={12} stroke="#94a3b8" />

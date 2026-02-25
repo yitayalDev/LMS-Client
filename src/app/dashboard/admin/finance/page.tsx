@@ -113,7 +113,7 @@ export default function AdminFinancePage() {
                         <CardTitle className="text-lg">Revenue Split</CardTitle>
                     </CardHeader>
                     <CardContent className="h-64">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                             <BarChart data={chartData} layout="vertical">
                                 <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
                                 <XAxis type="number" hide />

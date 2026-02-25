@@ -124,7 +124,7 @@ export default function StudentDashboard() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="h-64">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                             <BarChart data={stats?.exams || []}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                                 <XAxis dataKey="name" hide />

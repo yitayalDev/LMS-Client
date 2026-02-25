@@ -142,7 +142,7 @@ export default function InstructorDashboard() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="h-64">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                             <LineChart data={revenueData}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                                 <XAxis dataKey="month" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
@@ -162,7 +162,7 @@ export default function InstructorDashboard() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="h-64">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                             <BarChart data={stats?.enrollments || []}>
                                 <XAxis dataKey="name" hide />
                                 <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
