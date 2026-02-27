@@ -2,7 +2,7 @@
 
 import React, { useState, Suspense } from 'react';
 import { useForm } from 'react-hook-form';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useAuth } from '@/context/AuthContext';
@@ -26,6 +26,7 @@ type FormData = z.infer<typeof schema>;
 
 function RegisterForm() {
     const searchParams = useSearchParams();
+    const router = useRouter();
     const refCode = searchParams.get('ref');
     const { register: registerUser } = useAuth();
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
@@ -86,8 +87,11 @@ function RegisterForm() {
                 }
             }
             toast.success('Account created!', {
-                description: 'Welcome to LMSUOG. You are being logged in...'
+                description: 'Welcome to LMSUOG. Redirecting to login...'
             });
+            setTimeout(() => {
+                router.push('/login');
+            }, 2000);
         } catch (error: any) {
             console.error('Registration failed', error);
             toast.error('Registration failed', {
