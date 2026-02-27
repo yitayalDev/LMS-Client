@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Upload, User, Mail, Lock, GraduationCap, UserPlus } from 'lucide-react';
 import Link from 'next/link';
 import { userService } from '@/services/userService';
+import { toast } from 'sonner';
 
 const schema = z.object({
     name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -34,19 +35,22 @@ function RegisterForm() {
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
     const handleAvatarSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
         if (!file.type.startsWith('image/')) {
-            setMessage({ type: 'error', text: 'Please select an image file' });
+            toast.error('Invalid file type', {
+                description: 'Please select an image file.'
+            });
             return;
         }
 
         if (file.size > 5 * 1024 * 1024) {
-            setMessage({ type: 'error', text: 'Image must be less than 5MB' });
+            toast.error('File too large', {
+                description: 'Image must be less than 5MB.'
+            });
             return;
         }
 
@@ -61,7 +65,6 @@ function RegisterForm() {
 
     const onSubmit = async (data: FormData) => {
         setIsSubmitting(true);
-        setMessage(null);
         try {
 
             // Preparation for student-only registration
@@ -82,10 +85,14 @@ function RegisterForm() {
                     console.error('Avatar upload failed:', avatarError);
                 }
             }
-            setMessage({ type: 'success', text: 'Account created successfully! You are being logged in...' });
+            toast.success('Account created!', {
+                description: 'Welcome to LMSUOG. You are being logged in...'
+            });
         } catch (error: any) {
             console.error('Registration failed', error);
-            setMessage({ type: 'error', text: error.response?.data?.message || 'Registration failed' });
+            toast.error('Registration failed', {
+                description: error.response?.data?.message || 'Something went wrong.'
+            });
         } finally {
             setIsSubmitting(false);
         }
@@ -93,14 +100,6 @@ function RegisterForm() {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {message && (
-                <div className={`p-4 rounded-2xl text-sm font-medium animate-in fade-in slide-in-from-top-2 duration-300 ${message.type === 'success'
-                        ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                        : 'bg-red-500/10 text-red-400 border border-red-500/20'
-                    }`}>
-                    {message.text}
-                </div>
-            )}
             {/* Avatar Upload */}
             <div className="flex flex-col items-center space-y-4 mb-2">
                 <div

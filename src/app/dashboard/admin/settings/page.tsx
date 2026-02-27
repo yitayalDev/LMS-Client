@@ -13,6 +13,7 @@ import { useSettings } from '@/context/SettingsContext';
 import { getMediaUrl } from '@/lib/utils';
 import { AvatarUpload } from '@/components/ui/avatar-upload';
 import { userService } from '@/services/userService';
+import { toast } from 'sonner';
 
 // API_URL moved to @/lib/api
 
@@ -52,7 +53,9 @@ export default function SystemSettings() {
                 setSettings((prev: any) => ({ ...prev, ...data }));
             } catch (error) {
                 console.error('Failed to fetch settings', error);
-                alert('Failed to load settings');
+                toast.error('Load failed', {
+                    description: 'Could not load platform settings.'
+                });
             } finally {
                 setLoading(false);
             }
@@ -69,10 +72,14 @@ export default function SystemSettings() {
             const { data } = await api.patch(`/settings`, settings);
             setSettings((prev: any) => ({ ...prev, ...data }));
             await refreshSettings();
-            alert('Settings saved successfully');
+            toast.success('Settings saved', {
+                description: 'Platform configuration updated successfully.'
+            });
         } catch (error) {
             console.error('Failed to save settings', error);
-            alert('Failed to save settings');
+            toast.error('Save failed', {
+                description: 'Failed to update platform settings.'
+            });
         } finally {
             setSaving(false);
         }
@@ -80,23 +87,31 @@ export default function SystemSettings() {
 
     const handlePasswordChange = async () => {
         if (newPassword !== confirmPassword) {
-            alert('Passwords do not match');
+            toast.error('Validation error', {
+                description: 'Passwords do not match.'
+            });
             return;
         }
         if (newPassword.length < 6) {
-            alert('Password must be at least 6 characters');
+            toast.error('Validation error', {
+                description: 'Password must be at least 6 characters.'
+            });
             return;
         }
 
         setChangingPassword(true);
         try {
             await userService.updatePassword(currentPassword, newPassword);
-            alert('Password changed successfully!');
+            toast.success('Password changed', {
+                description: 'Your account security has been updated.'
+            });
             setCurrentPassword('');
             setNewPassword('');
             setConfirmPassword('');
         } catch (error: any) {
-            alert(error.response?.data?.message || 'Failed to change password');
+            toast.error('Update failed', {
+                description: error.response?.data?.message || 'Failed to change password.'
+            });
         } finally {
             setChangingPassword(false);
         }
@@ -114,9 +129,13 @@ export default function SystemSettings() {
             if (response.user) {
                 updateUser(response.user);
             }
-            alert('Email updated successfully!');
+            toast.success('Email updated', {
+                description: 'Your notification email has been changed.'
+            });
         } catch (error: any) {
-            alert(error.response?.data?.message || 'Failed to update email');
+            toast.error('Update failed', {
+                description: error.response?.data?.message || 'Failed to update email.'
+            });
         } finally {
             setUpdatingEmail(false);
         }
@@ -132,8 +151,13 @@ export default function SystemSettings() {
             });
             setSettings((prev: any) => ({ ...prev, platformLogo: data.platformLogo }));
             await refreshSettings();
+            toast.success('Logo uploaded', {
+                description: 'Platform branding has been updated.'
+            });
         } catch (error: any) {
-            alert(error.response?.data?.message || 'Failed to upload logo');
+            toast.error('Upload failed', {
+                description: error.response?.data?.message || 'Failed to upload logo.'
+            });
         } finally {
             setUploadingLogo(false);
         }

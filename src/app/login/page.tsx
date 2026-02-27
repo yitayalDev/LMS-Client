@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Mail, Lock, LogIn, GraduationCap } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 const schema = z.object({
     email: z.string().email('Invalid email address'),
@@ -23,23 +24,22 @@ export default function LoginPage() {
     const { login } = useAuth();
     const router = useRouter();
     const [isLoading, setIsLoading] = React.useState(false);
-    const [message, setMessage] = React.useState<{ type: 'success' | 'error'; text: string } | null>(null);
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(schema)
     });
 
     const onSubmit = async (data: FormData) => {
         setIsLoading(true);
-        setMessage(null);
         try {
             await login(data.email, data.password);
-            setMessage({ type: 'success', text: 'Login successful! Redirecting...' });
+            toast.success('Login successful!', {
+                description: 'Welcome back to LMSUOG.'
+            });
             setTimeout(() => router.push('/dashboard'), 1000);
         } catch (error: any) {
             console.error('Login failed', error);
-            setMessage({
-                type: 'error',
-                text: error.response?.data?.message || 'Invalid email or password. Please try again.'
+            toast.error('Login failed', {
+                description: error.response?.data?.message || 'Invalid email or password.'
             });
         } finally {
             setIsLoading(false);
@@ -71,14 +71,6 @@ export default function LoginPage() {
                         </p>
                     </CardHeader>
                     <CardContent className="pb-10 px-8">
-                        {message && (
-                            <div className={`mb-6 p-4 rounded-2xl text-sm font-medium animate-in fade-in slide-in-from-top-2 duration-300 ${message.type === 'success'
-                                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                                    : 'bg-red-500/10 text-red-400 border border-red-500/20'
-                                }`}>
-                                {message.text}
-                            </div>
-                        )}
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                             <div className="space-y-2">
                                 <div className="relative group">
