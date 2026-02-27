@@ -10,6 +10,11 @@ const api = axios.create({
 
 api.interceptors.request.use(
     (config) => {
+        // Strip leading slash from the URL to prevent it from overriding the baseURL prefix (/api)
+        if (config.url && config.url.startsWith('/')) {
+            config.url = config.url.substring(1);
+        }
+
         const storedUser = localStorage.getItem('user');
         const storedToken = localStorage.getItem('token');
 
