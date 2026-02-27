@@ -37,7 +37,9 @@ export default function SystemSettings() {
         platformLogo: '',
     });
 
-    // Password state
+    // Account state
+    const [adminEmail, setAdminEmail] = useState(user?.email || '');
+    const [updatingEmail, setUpdatingEmail] = useState(false);
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -97,6 +99,24 @@ export default function SystemSettings() {
             alert(error.response?.data?.message || 'Failed to change password');
         } finally {
             setChangingPassword(false);
+        }
+    };
+
+    const handleEmailChange = async () => {
+        if (!adminEmail || !adminEmail.includes('@')) {
+            alert('Please enter a valid email address');
+            return;
+        }
+
+        setUpdatingEmail(true);
+        try {
+            const response = await userService.updateProfile({ email: adminEmail });
+            const { updateUser } = useAuth(); // Hook is already at top, but just being safe
+            alert('Email updated successfully!');
+        } catch (error: any) {
+            alert(error.response?.data?.message || 'Failed to update email');
+        } finally {
+            setUpdatingEmail(false);
         }
     };
 
@@ -360,52 +380,81 @@ export default function SystemSettings() {
                     )}
 
                     {activeTab === 'account' && (
-                        <Card className="border-none shadow-md ring-1 ring-gray-100">
-                            <CardHeader>
-                                <CardTitle className="text-xl">Account Security</CardTitle>
-                                <CardDescription>Change your administrator account password.</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="currentPassword">Current Password</Label>
-                                    <Input
-                                        id="currentPassword"
-                                        type="password"
-                                        value={currentPassword}
-                                        onChange={(e) => setCurrentPassword(e.target.value)}
-                                        placeholder="Enter current password"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="newPassword">New Password</Label>
-                                    <Input
-                                        id="newPassword"
-                                        type="password"
-                                        value={newPassword}
-                                        onChange={(e) => setNewPassword(e.target.value)}
-                                        placeholder="Enter new password (min 6 characters)"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                                    <Input
-                                        id="confirmPassword"
-                                        type="password"
-                                        value={confirmPassword}
-                                        onChange={(e) => setConfirmPassword(e.target.value)}
-                                        placeholder="Confirm new password"
-                                    />
-                                </div>
-                                <Button
-                                    onClick={handlePasswordChange}
-                                    disabled={changingPassword}
-                                    className="w-full sm:w-auto"
-                                >
-                                    {changingPassword ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Shield className="mr-2 h-4 w-4" />}
-                                    {changingPassword ? 'Changing...' : 'Update Admin Password'}
-                                </Button>
-                            </CardContent>
-                        </Card>
+                        <div className="space-y-6">
+                            <Card className="border-none shadow-md ring-1 ring-gray-100">
+                                <CardHeader>
+                                    <CardTitle className="text-xl">Email Address</CardTitle>
+                                    <CardDescription>Update your administrator contact email.</CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="adminEmail">Account Email</Label>
+                                        <Input
+                                            id="adminEmail"
+                                            type="email"
+                                            value={adminEmail}
+                                            onChange={(e) => setAdminEmail(e.target.value)}
+                                            placeholder="admin@example.com"
+                                        />
+                                    </div>
+                                    <Button
+                                        onClick={handleEmailChange}
+                                        disabled={updatingEmail}
+                                        className="w-full sm:w-auto"
+                                    >
+                                        {updatingEmail ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                                        {updatingEmail ? 'Updating...' : 'Update Email'}
+                                    </Button>
+                                </CardContent>
+                            </Card>
+
+                            <Card className="border-none shadow-md ring-1 ring-gray-100">
+                                <CardHeader>
+                                    <CardTitle className="text-xl">Account Password</CardTitle>
+                                    <CardDescription>Change your administrator account password.</CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="currentPassword">Current Password</Label>
+                                        <Input
+                                            id="currentPassword"
+                                            type="password"
+                                            value={currentPassword}
+                                            onChange={(e) => setCurrentPassword(e.target.value)}
+                                            placeholder="Enter current password"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="newPassword">New Password</Label>
+                                        <Input
+                                            id="newPassword"
+                                            type="password"
+                                            value={newPassword}
+                                            onChange={(e) => setNewPassword(e.target.value)}
+                                            placeholder="Enter new password (min 6 characters)"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                                        <Input
+                                            id="confirmPassword"
+                                            type="password"
+                                            value={confirmPassword}
+                                            onChange={(e) => setConfirmPassword(e.target.value)}
+                                            placeholder="Confirm new password"
+                                        />
+                                    </div>
+                                    <Button
+                                        onClick={handlePasswordChange}
+                                        disabled={changingPassword}
+                                        className="w-full sm:w-auto"
+                                    >
+                                        {changingPassword ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Shield className="mr-2 h-4 w-4" />}
+                                        {changingPassword ? 'Changing...' : 'Update Admin Password'}
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                        </div>
                     )}
                 </div>
             </div>
