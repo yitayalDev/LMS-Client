@@ -19,7 +19,7 @@ import { userService } from '@/services/userService';
 type ActiveTab = 'general' | 'security' | 'notifications' | 'maintenance' | 'account';
 
 export default function SystemSettings() {
-    const { user } = useAuth();
+    const { user, updateUser } = useAuth();
     const { refreshSettings } = useSettings();
     const [activeTab, setActiveTab] = useState<ActiveTab>('general');
     const [loading, setLoading] = useState(true);
@@ -111,7 +111,9 @@ export default function SystemSettings() {
         setUpdatingEmail(true);
         try {
             const response = await userService.updateProfile({ email: adminEmail });
-            const { updateUser } = useAuth(); // Hook is already at top, but just being safe
+            if (response.user) {
+                updateUser(response.user);
+            }
             alert('Email updated successfully!');
         } catch (error: any) {
             alert(error.response?.data?.message || 'Failed to update email');

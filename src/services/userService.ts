@@ -13,7 +13,7 @@ export const userService = {
     /**
      * Update user profile (name, bio, topic)
      */
-    updateProfile: async (data: { name?: string; bio?: string; topic?: string }) => {
+    updateProfile: async (data: { name?: string; bio?: string; topic?: string; email?: string }) => {
         const response = await api.put(
             `/users/profile`,
             data
