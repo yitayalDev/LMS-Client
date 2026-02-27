@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Settings, Shield, Bell, Save, Globe, Database, Loader2, CheckCircle2, Upload } from 'lucide-react';
+import { Settings, Shield, Bell, Save, Globe, Database, Loader2, CheckCircle2, Upload, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,10 +12,11 @@ import { Switch } from '@/components/ui/switch';
 import { useSettings } from '@/context/SettingsContext';
 import { getMediaUrl } from '@/lib/utils';
 import { AvatarUpload } from '@/components/ui/avatar-upload';
+import { userService } from '@/services/userService';
 
 // API_URL moved to @/lib/api
 
-type ActiveTab = 'general' | 'security' | 'notifications' | 'maintenance';
+type ActiveTab = 'general' | 'security' | 'notifications' | 'maintenance' | 'account';
 
 export default function SystemSettings() {
     const { user } = useAuth();
@@ -35,6 +36,12 @@ export default function SystemSettings() {
         enableNotifications: true,
         platformLogo: '',
     });
+
+    // Password state
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [changingPassword, setChangingPassword] = useState(false);
 
     useEffect(() => {
         const fetchSettings = async () => {
@@ -66,6 +73,30 @@ export default function SystemSettings() {
             alert('Failed to save settings');
         } finally {
             setSaving(false);
+        }
+    };
+
+    const handlePasswordChange = async () => {
+        if (newPassword !== confirmPassword) {
+            alert('Passwords do not match');
+            return;
+        }
+        if (newPassword.length < 6) {
+            alert('Password must be at least 6 characters');
+            return;
+        }
+
+        setChangingPassword(true);
+        try {
+            await userService.updatePassword(currentPassword, newPassword);
+            alert('Password changed successfully!');
+            setCurrentPassword('');
+            setNewPassword('');
+            setConfirmPassword('');
+        } catch (error: any) {
+            alert(error.response?.data?.message || 'Failed to change password');
+        } finally {
+            setChangingPassword(false);
         }
     };
 
@@ -134,6 +165,13 @@ export default function SystemSettings() {
                             onClick={() => setActiveTab('notifications')}
                         >
                             <Bell className="mr-3 h-5 w-5" /> Notifications
+                        </Button>
+                        <Button
+                            variant={activeTab === 'account' ? 'secondary' : 'ghost'}
+                            className={`w-full justify-start ${activeTab === 'account' ? 'font-bold bg-primary/10 text-primary' : ''}`}
+                            onClick={() => setActiveTab('account')}
+                        >
+                            <Lock className="mr-3 h-5 w-5" /> Account Security
                         </Button>
                         <div className="pt-4 mt-4 border-t border-gray-100">
                             <Button
@@ -317,6 +355,55 @@ export default function SystemSettings() {
                                     </p>
                                     <p className="text-xs text-amber-700">Changing maintenance mode will immediately disconnect all active student/instructor sessions if it forces a logout.</p>
                                 </div>
+                            </CardContent>
+                        </Card>
+                    )}
+
+                    {activeTab === 'account' && (
+                        <Card className="border-none shadow-md ring-1 ring-gray-100">
+                            <CardHeader>
+                                <CardTitle className="text-xl">Account Security</CardTitle>
+                                <CardDescription>Change your administrator account password.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="currentPassword">Current Password</Label>
+                                    <Input
+                                        id="currentPassword"
+                                        type="password"
+                                        value={currentPassword}
+                                        onChange={(e) => setCurrentPassword(e.target.value)}
+                                        placeholder="Enter current password"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="newPassword">New Password</Label>
+                                    <Input
+                                        id="newPassword"
+                                        type="password"
+                                        value={newPassword}
+                                        onChange={(e) => setNewPassword(e.target.value)}
+                                        placeholder="Enter new password (min 6 characters)"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                                    <Input
+                                        id="confirmPassword"
+                                        type="password"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        placeholder="Confirm new password"
+                                    />
+                                </div>
+                                <Button
+                                    onClick={handlePasswordChange}
+                                    disabled={changingPassword}
+                                    className="w-full sm:w-auto"
+                                >
+                                    {changingPassword ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Shield className="mr-2 h-4 w-4" />}
+                                    {changingPassword ? 'Changing...' : 'Update Admin Password'}
+                                </Button>
                             </CardContent>
                         </Card>
                     )}
