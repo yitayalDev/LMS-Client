@@ -22,16 +22,27 @@ type FormData = z.infer<typeof schema>;
 export default function LoginPage() {
     const { login } = useAuth();
     const router = useRouter();
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [message, setMessage] = React.useState<{ type: 'success' | 'error'; text: string } | null>(null);
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(schema)
     });
 
     const onSubmit = async (data: FormData) => {
+        setIsLoading(true);
+        setMessage(null);
         try {
             await login(data.email, data.password);
-            router.push('/dashboard');
-        } catch (error) {
+            setMessage({ type: 'success', text: 'Login successful! Redirecting...' });
+            setTimeout(() => router.push('/dashboard'), 1000);
+        } catch (error: any) {
             console.error('Login failed', error);
+            setMessage({
+                type: 'error',
+                text: error.response?.data?.message || 'Invalid email or password. Please try again.'
+            });
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -60,6 +71,14 @@ export default function LoginPage() {
                         </p>
                     </CardHeader>
                     <CardContent className="pb-10 px-8">
+                        {message && (
+                            <div className={`mb-6 p-4 rounded-2xl text-sm font-medium animate-in fade-in slide-in-from-top-2 duration-300 ${message.type === 'success'
+                                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                                    : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                                }`}>
+                                {message.text}
+                            </div>
+                        )}
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                             <div className="space-y-2">
                                 <div className="relative group">
@@ -93,10 +112,23 @@ export default function LoginPage() {
 
                             <Button
                                 type="submit"
+                                disabled={isLoading}
                                 className="w-full h-14 rounded-2xl text-lg font-bold shadow-xl hover:shadow-primary/30 transition-all hover:scale-[1.01] active:scale-[0.99] bg-primary hover:bg-primary/90 text-white"
                             >
-                                <LogIn className="mr-3 h-6 w-6" />
-                                Sign In
+                                {isLoading ? (
+                                    <span className="flex items-center">
+                                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Signing In...
+                                    </span>
+                                ) : (
+                                    <>
+                                        <LogIn className="mr-3 h-6 w-6" />
+                                        Sign In
+                                    </>
+                                )}
                             </Button>
 
                             <div className="relative py-4">

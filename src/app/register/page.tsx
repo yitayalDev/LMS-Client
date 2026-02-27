@@ -34,18 +34,19 @@ function RegisterForm() {
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
     const handleAvatarSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
         if (!file.type.startsWith('image/')) {
-            alert('Please select an image file');
+            setMessage({ type: 'error', text: 'Please select an image file' });
             return;
         }
 
         if (file.size > 5 * 1024 * 1024) {
-            alert('Image must be less than 5MB');
+            setMessage({ type: 'error', text: 'Image must be less than 5MB' });
             return;
         }
 
@@ -59,8 +60,9 @@ function RegisterForm() {
     };
 
     const onSubmit = async (data: FormData) => {
+        setIsSubmitting(true);
+        setMessage(null);
         try {
-            setIsSubmitting(true);
 
             // Preparation for student-only registration
             const extra: any = {
@@ -80,9 +82,10 @@ function RegisterForm() {
                     console.error('Avatar upload failed:', avatarError);
                 }
             }
+            setMessage({ type: 'success', text: 'Account created successfully! You are being logged in...' });
         } catch (error: any) {
             console.error('Registration failed', error);
-            alert(error.response?.data?.message || 'Registration failed');
+            setMessage({ type: 'error', text: error.response?.data?.message || 'Registration failed' });
         } finally {
             setIsSubmitting(false);
         }
@@ -90,6 +93,14 @@ function RegisterForm() {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            {message && (
+                <div className={`p-4 rounded-2xl text-sm font-medium animate-in fade-in slide-in-from-top-2 duration-300 ${message.type === 'success'
+                        ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                        : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                    }`}>
+                    {message.text}
+                </div>
+            )}
             {/* Avatar Upload */}
             <div className="flex flex-col items-center space-y-4 mb-2">
                 <div
