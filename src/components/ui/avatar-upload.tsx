@@ -10,9 +10,10 @@ interface AvatarUploadProps {
     onUpload: (file: File) => Promise<void>;
     size?: 'sm' | 'md' | 'lg';
     label?: string;
+    disabled?: boolean;
 }
 
-export function AvatarUpload({ currentAvatar, onUpload, size = 'md', label = 'Change Avatar' }: AvatarUploadProps) {
+export function AvatarUpload({ currentAvatar, onUpload, size = 'md', label = 'Change Avatar', disabled }: AvatarUploadProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const initialPreview = getMediaUrl(currentAvatar) || null;
@@ -33,6 +34,7 @@ export function AvatarUpload({ currentAvatar, onUpload, size = 'md', label = 'Ch
     };
 
     const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (disabled) return;
         const file = e.target.files?.[0];
         if (!file) return;
 
@@ -70,13 +72,14 @@ export function AvatarUpload({ currentAvatar, onUpload, size = 'md', label = 'Ch
     };
 
     const handleClick = () => {
+        if (disabled) return;
         fileInputRef.current?.click();
     };
 
     return (
         <div className="flex flex-col items-center space-y-3">
             <div
-                className={`${sizeClasses[size]} rounded-full overflow-hidden bg-gray-100 border-2 border-gray-200 flex items-center justify-center cursor-pointer hover:border-primary transition-colors relative group`}
+                className={`${sizeClasses[size]} rounded-full overflow-hidden bg-gray-100 border-2 border-gray-200 flex items-center justify-center ${disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:border-primary'} transition-colors relative group`}
                 onClick={handleClick}
             >
                 {preview ? (
@@ -90,9 +93,11 @@ export function AvatarUpload({ currentAvatar, onUpload, size = 'md', label = 'Ch
                                 setError("Failed to load image");
                             }}
                         />
-                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
-                            <Upload className="text-white opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6" />
-                        </div>
+                        {!disabled && (
+                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
+                                <Upload className="text-white opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6" />
+                            </div>
+                        )}
                     </>
                 ) : (
                     <User className="h-12 w-12 text-gray-400" />
@@ -109,12 +114,13 @@ export function AvatarUpload({ currentAvatar, onUpload, size = 'md', label = 'Ch
                 accept="image/*"
                 onChange={handleFileSelect}
                 className="hidden"
+                disabled={disabled}
             />
             <Button
                 variant="outline"
                 size="sm"
                 onClick={handleClick}
-                disabled={isUploading}
+                disabled={isUploading || disabled}
             >
                 {isUploading ? 'Uploading...' : label}
             </Button>

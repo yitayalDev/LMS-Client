@@ -36,7 +36,7 @@ export default function StudentCourses() {
             <div className="flex justify-between items-center">
                 <h1 className="text-3xl font-bold">My Enrolled Courses</h1>
                 <Link href="/courses">
-                    <Button>Browse More</Button>
+                    <Button disabled={user?.isDemo}>Browse More</Button>
                 </Link>
             </div>
 

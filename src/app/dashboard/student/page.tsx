@@ -54,7 +54,7 @@ export default function StudentDashboard() {
             <div className="flex justify-between items-center">
                 <h1 className="text-3xl font-bold">Hello, {user?.name}</h1>
                 <Link href="/dashboard/student/leaderboard">
-                    <Button variant="outline">
+                    <Button variant="outline" disabled={user?.isDemo}>
                         <Users className="mr-2 h-4 w-4" />
                         Leaderboard
                     </Button>
@@ -198,10 +198,11 @@ export default function StudentDashboard() {
                                         </div>
                                     </div>
                                     <a
-                                        href={`${API_URL.replace('/api', '')}/certificates/download/${cert._id}`}
-                                        target="_blank"
+                                        href={user?.isDemo ? '#' : `${API_URL.replace('/api', '')}/certificates/download/${cert._id}`}
+                                        target={user?.isDemo ? '_self' : '_blank'}
                                         rel="noopener noreferrer"
-                                        className="inline-flex items-center px-3 py-1 bg-primary text-white text-sm rounded hover:bg-primary/90 transition-colors"
+                                        onClick={(e) => user?.isDemo && e.preventDefault()}
+                                        className={`inline-flex items-center px-3 py-1 bg-primary text-white text-sm rounded hover:bg-primary/90 transition-colors ${user?.isDemo ? 'opacity-50 cursor-not-allowed' : ''}`}
                                     >
                                         Download PDF
                                     </a>

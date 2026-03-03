@@ -8,7 +8,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Mail, Lock, LogIn, GraduationCap } from 'lucide-react';
+import { Mail, Lock, LogIn, GraduationCap, ShieldCheck, BookOpen, Users } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -128,6 +128,48 @@ export default function LoginPage() {
                                     <div className="w-full border-t border-white/10" />
                                 </div>
                                 <div className="relative flex justify-center text-xs uppercase">
+                                    <span className="bg-zinc-950 px-2 text-zinc-500 font-medium tracking-wider">Demo Access</span>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-3">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => onSubmit({ email: 'admin-demo@lmsuog.com', password: 'demo1234' })}
+                                    className="h-12 rounded-xl text-xs font-bold border-white/10 bg-white/5 hover:bg-primary/20 hover:border-primary/50 text-white transition-all flex-col gap-1"
+                                >
+                                    <ShieldCheck className="h-4 w-4 text-primary" />
+                                    <span>Admin</span>
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => onSubmit({ email: 'instructor-demo@lmsuog.com', password: 'demo1234' })}
+                                    className="h-12 rounded-xl text-xs font-bold border-white/10 bg-white/5 hover:bg-primary/20 hover:border-primary/50 text-white transition-all flex-col gap-1"
+                                >
+                                    <BookOpen className="h-4 w-4 text-primary" />
+                                    <span>Instructor</span>
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => onSubmit({ email: 'student-demo@lmsuog.com', password: 'demo1234' })}
+                                    className="h-12 rounded-xl text-xs font-bold border-white/10 bg-white/5 hover:bg-primary/20 hover:border-primary/50 text-white transition-all flex-col gap-1"
+                                >
+                                    <Users className="h-4 w-4 text-primary" />
+                                    <span>Student</span>
+                                </Button>
+                            </div>
+
+                            <div className="relative py-4">
+                                <div className="absolute inset-0 flex items-center">
+                                    <div className="w-full border-t border-white/10" />
+                                </div>
+                                <div className="relative flex justify-center text-xs uppercase">
                                     <span className="bg-zinc-950 px-2 text-zinc-500 font-medium tracking-wider">Or continue with</span>
                                 </div>
                             </div>
@@ -178,6 +220,6 @@ export default function LoginPage() {
                     © 2026 LMSUOG Platform • Secure Access
                 </p>
             </div>
-        </div>
+        </div >
     );
 }

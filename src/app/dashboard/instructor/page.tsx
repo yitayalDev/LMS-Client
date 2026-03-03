@@ -93,7 +93,7 @@ export default function InstructorDashboard() {
                         </Button>
                     </Link>
                     <Link href="/courses/create">
-                        <Button>
+                        <Button disabled={user?.isDemo}>
                             <PlusCircle className="mr-2 h-4 w-4" />
                             Create New Course
                         </Button>
@@ -226,7 +226,7 @@ export default function InstructorDashboard() {
                                                 <BookOpen className="mr-2 h-4 w-4" /> Materials
                                             </Button>
                                         </Link>
-                                        <Button variant="ghost" size="sm">Edit</Button>
+                                        <Button variant="ghost" size="sm" disabled={user?.isDemo}>Edit</Button>
                                     </div>
                                 </div>
                             ))}

@@ -169,6 +169,7 @@ export default function StudentSettings() {
                                     currentAvatar={user?.avatar}
                                     onUpload={handleAvatarUpload}
                                     size="lg"
+                                    disabled={user?.isDemo}
                                 />
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
@@ -192,7 +193,7 @@ export default function StudentSettings() {
                                         placeholder="Tell us about yourself..."
                                     />
                                 </div>
-                                <Button onClick={handleProfileSave} disabled={isLoading}>
+                                <Button onClick={handleProfileSave} disabled={isLoading || user?.isDemo}>
                                     <Save className="mr-2 h-4 w-4" />
                                     {isLoading ? 'Saving...' : 'Save Changes'}
                                 </Button>
@@ -246,7 +247,7 @@ export default function StudentSettings() {
                                         onCheckedChange={(checked) => setNotifications({ ...notifications, weeklyDigest: checked })}
                                     />
                                 </div>
-                                <Button onClick={handleNotificationsSave} disabled={isLoading}>
+                                <Button onClick={handleNotificationsSave} disabled={isLoading || user?.isDemo}>
                                     <Save className="mr-2 h-4 w-4" />
                                     {isLoading ? 'Saving...' : 'Save Preferences'}
                                 </Button>
@@ -287,7 +288,7 @@ export default function StudentSettings() {
                                         placeholder="Confirm new password"
                                     />
                                 </div>
-                                <Button onClick={handlePasswordChange} disabled={isLoading}>
+                                <Button onClick={handlePasswordChange} disabled={isLoading || user?.isDemo}>
                                     <Lock className="mr-2 h-4 w-4" />
                                     {isLoading ? 'Changing...' : 'Change Password'}
                                 </Button>

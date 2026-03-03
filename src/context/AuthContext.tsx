@@ -13,6 +13,7 @@ interface User {
     bio?: string;
     instructorDetails?: any;
     loginStreak?: number;
+    isDemo?: boolean;
 }
 
 interface AuthContextType {

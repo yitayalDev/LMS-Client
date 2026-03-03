@@ -16,6 +16,7 @@ import { getMediaUrl } from '@/lib/utils';
 import { API_URL } from '@/lib/api';
 import StarRating from '@/components/course/StarRating';
 import CourseReviewForm from '@/components/course/CourseReviewForm';
+import { toast } from 'sonner';
 
 import { reviewService } from '@/services/interactionService';
 import dayjs from 'dayjs';
@@ -85,6 +86,14 @@ export default function CourseDetails() {
             router.push('/login');
             return;
         }
+
+        if (user.role !== 'student') {
+            toast.error('Restricted Action', {
+                description: 'Only students can purchase or enroll in courses.'
+            });
+            return;
+        }
+
         setShowEnrollForm(true);
     };
 
@@ -242,7 +251,12 @@ export default function CourseDetails() {
                         <div className="text-3xl font-bold">${course.price}</div>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <Button className="w-full" size="lg" onClick={handleEnrollClick} disabled={enrolling}>
+                        <Button
+                            className="w-full"
+                            size="lg"
+                            onClick={handleEnrollClick}
+                            disabled={enrolling || !!(user && user.role !== 'student')}
+                        >
                             {enrolling ? (course.price > 0 ? 'Redirecting...' : 'Enrolling...') : (course.price > 0 ? 'Buy Now' : 'Enroll Now')}
                         </Button>
                         <p className="text-xs text-center text-muted-foreground">

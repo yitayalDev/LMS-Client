@@ -17,13 +17,13 @@ export default function AdminDashboard() {
                 <h1 className="text-3xl font-bold">System Administration</h1>
                 <div className="flex space-x-4">
                     <Link href="/dashboard/admin/settings">
-                        <Button variant="outline">
+                        <Button variant="outline" disabled={user?.isDemo}>
                             <Settings className="mr-2 h-4 w-4" />
                             Settings
                         </Button>
                     </Link>
                     <Link href="/dashboard/admin/finance">
-                        <Button variant="outline" className="border-green-600 text-green-700 hover:bg-green-50">
+                        <Button variant="outline" className="border-green-600 text-green-700 hover:bg-green-50" disabled={user?.isDemo}>
                             <DollarSign className="mr-2 h-4 w-4" />
                             Financials
                         </Button>
